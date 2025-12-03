@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Simple Scanner</title>
+  </head>
+<body>
+<h1>Simple Network Scanner</h1>
+
+<h2>Port Scanner</h2>
+  <input id="target" placeholder="IP or website"> <!-- Input -->
+  <button onclick="scanPorts()">Scan</button> <!-- Calls function from below
+<pre id="ports"></pre> <!-- Shows all open ports -->
+
+<h2>Website Security</h2>
+  <input id="website" placeholder="Website">
+  <button onclick="checkWebsite()">Check</button>
+<pre id="websiteResult"></pre> <!-- Shows all webiste Security issues -->
+
+<h2>Password Strength</h2>
+  <input id="password" placeholder="Password">
+  <button onclick="checkPassword()">Check</button>
+<pre id="pwResult"></pre> <!-- Shows password strenth score -->
+
+
+
+
+<!--  Scans ports -->
+<script>
+async function scanPorts(){
+    const target = document.getElementById("target").value;
+    const res = await fetch("/ports", {method:"POST", body:new URLSearchParams({target})}); // Sends data to server using POST request
+    const data = await res.json(); // Converts server response to JSON
+    document.getElementById("ports").textContent = "Open ports: " + (data.open_ports.join(", ") || "None"); // Displayes ports or None 
+}
+
+  // Scans website secuirty 
+async function checkWebsite(){
+    const site = document.getElementById("website").value;
+    const res = await fetch("/website", {method:"POST", body:new URLSearchParams({website:site})});
+    const data = await res.json();
+    document.getElementById("websiteResult").textContent = data.issues.join("\n") || "No issues";
+}
+
+// Checks password strength
+async function checkPassword(){
+    const pw = document.getElementById("password").value;
+    const res = await fetch("/password", {method:"POST", body:new URLSearchParams({password:pw})});
+    const data = await res.json();
+    document.getElementById("pwResult").textContent = "Score: " + data.score + "/5";
+}
+</script>
+</body>
+</html>
